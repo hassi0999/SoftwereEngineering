@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Signup | MediaHub</title>
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+}
+
+.signup-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 45px 35px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.msg {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 500;
+  height: 20px;
+  color: #ffcbcb;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #00ffe0;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+input::placeholder {
+  color: #ccc;
+  font-size: 14px;
+}
+
+select {
+  color: #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(to right, #00ffe0, #00b4db);
+  color: #000;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 17px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(to right, #00b4db, #00ffe0);
+  transform: scale(1.02);
+}
+
+p {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 15px;
+  color: #e0e0e0;
+}
+
+p a {
+  color: #00ffe0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .signup-box {
+    padding: 30px 20px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  input,
+  select,
+  button {
+    font-size: 15px;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <form id="signupForm" method="POST" class="signup-box">
+    {% csrf_token %}
+    <h2>User Signup</h2>
+    <div class="msg" id="message"></div>
+
+    <input
+      type="text"
+      id="user_name"
+      name="user_name"
+      placeholder="Username"
+      required
+    />
+    <input
+      type="email"
+      id="user_email"
+      name="user_email"
+      placeholder="Email"
+      required
+    />
+    <input
+      type="password"
+      id="user_password"
+      name="user_password"
+      placeholder="Password"
+      required
+    />
+    <select id="user_role" name="user_role" required>
+      <option value="">Select Role</option>
+      <option value="admin">Admin</option>
+      <option value="user">User</option>
+    </select>
+
+    <button type="submit">Signup</button>
+    <p>Already have an account? <a href="/login/">Login</a></p>
+  </form>
+
+  <script>
+    console.log("Signup Script Loaded");
+
+    document.getElementById("signupForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      console.log("Form Submitted");
+
+      const name = document.getElementById("user_name").value;
+      const email = document.getElementById("user_email").value;
+      const password = document.getElementById("user_password").value;
+      const role = document.getElementById("user_role").value;
+      const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+      console.log("Form Data: ", { name, email, password, role });
+
+      try {
+        const response = await fetch("/api/signup/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+          body: JSON.stringify({
+            user_name: name,
+            user_email: email,
+            user_password: password,
+            user_role: role,
+          }),
+        });
+
+        const data = await response.json();
+        const msgDiv = document.getElementById("message");
+
+        if (data.status === 200) {
+          msgDiv.style.color = "lightgreen";
+          msgDiv.textContent = "Signup successful! Redirecting to login page...";
+          setTimeout(() => {
+            window.location.href = "/login/";
+          }, 1500);
+        } else {
+          msgDiv.style.color = "pink";
+          if (typeof data.message === "object") {
+            const errors = Object.values(data.message).flat().join(", ");
+            msgDiv.textContent = errors;
+          } else {
+            msgDiv.textContent = data.message || "Signup failed";
+          }
+        }
+      } catch (error) {
+        console.error("Error during signup:", error);
+        const msgDiv = document.getElementById("message");
+        msgDiv.style.color = "red";
+        msgDiv.textContent = "Something went wrong. Please try again.";
+      }
+    });
+  </script>
+</body>
+</html>

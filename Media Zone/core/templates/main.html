@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediaHub | Select Role</title>
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: white;
+}
+
+main {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 45px 35px;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 720px;
+  transition: all 0.3s ease;
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 35px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.card-grid {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  flex: 1;
+  min-width: 250px;
+  padding: 30px 22px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  transition: transform 0.3s ease, background 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.02);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.card h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.card p {
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  color: #e0e0e0;
+}
+
+.card-icon {
+  font-size: 38px;
+  margin-bottom: 18px;
+  color: #00ffe0;
+}
+
+@media (max-width: 600px) {
+  .card-grid {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  main {
+    padding: 30px 20px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <main>
+    <h1>Welcome to Media Zone</h1>
+
+    <div class="card-grid">
+      <a href="{% url 'media_search' %}" class="card">
+        <div class="card-icon">🎬</div>
+        <h2>Media</h2>
+        <p>Search and explore a vast collection of digital media including videos, images.</p>
+      </a>
+
+      <a href="{% url 'user_list' %}" class="card">
+        <div class="card-icon">👤</div>
+        <h2>User</h2>
+        <p>Manage user accounts, roles, and permissions with a clean and powerful interface.</p>
+      </a>
+    </div>
+  </main>
+
+</body>
+</html>

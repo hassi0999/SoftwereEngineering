@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | MediaHub</title>
+  <style>
+  * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+}
+
+.login-box {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.msg {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 500;
+  height: 20px;
+  color: #ffcbcb;
+}
+
+input {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #00ffe0;
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+input::placeholder {
+  color: #ccc;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(to right, #00ffe0, #00b4db);
+  color: #000;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 17px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(to right, #00b4db, #00ffe0);
+  transform: scale(1.02);
+}
+
+p {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 15px;
+  color: #e0e0e0;
+}
+
+p a {
+  color: #00ffe0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    padding: 35px 25px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  input,
+  button {
+    font-size: 15px;
+  }
+}
+
+
+  </style>
+</head>
+<body>
+
+  <form id="loginForm" class="login-box">
+    <h2>Welcome to Media Zone</h2>
+    <div class="msg" id="message"></div>
+    <input type="email" id="user_email" placeholder="Enter your email" required>
+    <input type="password" id="user_password" placeholder="Enter your password" required>
+    <button type="submit">Login</button>
+    <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+  </form>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("user_email").value;
+      const password = document.getElementById("user_password").value;
+      const msgDiv = document.getElementById("message");
+
+      const response = await fetch("http://localhost:8001/api/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_email: email,
+          user_password: password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.access_token);
+        localStorage.setItem("user_id", data.user_id || (data.user && data.user.id));
+
+        msgDiv.style.color = "lightgreen";
+        msgDiv.textContent = "Login successful! Redirecting...";
+
+        setTimeout(() => {
+          window.location.href = "/main/";
+        }, 1500);
+      } else {
+        msgDiv.style.color = "#ffb3b3";
+        msgDiv.textContent = data.message || "Login failed. Please try again.";
+      }
+    });
+  </script>
+
+</body>
+</html>
